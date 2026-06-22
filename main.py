@@ -2,6 +2,7 @@ from character import Character
 from enemy import Enemy
 from battle import Battle
 from spell import Spell
+from effect import *
 
 def main():
     from battler import Battler
@@ -12,8 +13,20 @@ def main():
         "Hero", 100, 100, 20, 20,
         15, 10, 10, 8
     )
-    fireball = Spell("Fireball", 5, 1, "enemy", "damage")
-    heal = Spell("Heal", 3, 1,"ally", "restore_hp")
+    fireball = Spell(
+        name="Damage",
+        mp_cost=5,
+        power=1.5,
+        target_type="enemy",
+        effect=DamageEffect()
+    )
+    heal = Spell(
+        name="Heal",
+        mp_cost=10,
+        power=1.5,
+        target_type="ally",
+        effect=HealEffect()
+    )
     focus = Spell("Focus", 2, 1, "self", "restore_mp")
     hero.spells = [heal]
 

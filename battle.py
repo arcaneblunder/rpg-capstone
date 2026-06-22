@@ -1,5 +1,6 @@
 import random
 from spell import Spell
+from action import *
 
 class Battle:
     def __init__(self, party, enemies):
@@ -109,48 +110,17 @@ class Battle:
         # -------------------------
         if battler in self.party:
 
-            choice = self.player_choose_action(battler)
-
-            if choice == "1":
-                targets = self.get_targets_for_type(
-                    battler,
-                    "enemy"
-                )
-
-                target = self.choose_target(targets)
-
-                self.basic_attack(battler, target)
-
-            elif choice == "2":
-                spell = self.choose_spell(battler)
-
-                targets = self.get_targets_for_type(
-                    battler,
-                    spell.target_type
-                )
-
-                if spell.target_type == "self":
-                    target = battler
-                else:
-                    target = self.choose_target(targets)
-
-                self.cast_spell(battler, spell, target)
-
-            elif choice == "3":
-                self.defend(battler)
-                return # needed to break logic
-
-            else:
-                print("Invalid choice, defaulting to Attack")
-                target = self.choose_party_target()
-                self.basic_attack(battler, target)
+            action = self.get_player_action(battler)
+            action.execute(self, battler)
 
         # -------------------------
         # ENEMY TURN
         # -------------------------
         else:
-            target = self.choose_enemy_target()
-            self.basic_attack(battler, target)
+            action = AttackAction(self.choose_enemy_target())
+            action.execute(self, battler)
+
+            # for ai stuff action = battler.ai_choose_action(self)
 
     # -------------------------
     # Main loop
@@ -233,3 +203,28 @@ class Battle:
                     return targets[index]
 
             print("Invalid choice.")
+
+    def get_player_action(self, battler):
+        print(f"\n{battler.name}'s turn")
+
+        print("1. Attack")
+        print("2. Use Spell")
+        print("3. Defend")
+
+        choice = input("> ")
+
+        if choice == "1":
+            target = self.choose_party_target()
+            return AttackAction(target)
+
+        elif choice == "2":
+            spell = self.choose_spell(battler)
+            target = self.choose_target(
+                self.get_targets_for_type(battler, spell.target_type)
+            )
+            return SpellAction(spell, target)
+
+        elif choice == "3":
+            return DefendAction()
+
+        return AttackAction(self.choose_party_target())
