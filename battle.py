@@ -1,5 +1,4 @@
 import random
-from spell import Spell
 from action import *
 
 class Battle:
@@ -105,7 +104,18 @@ class Battle:
         if not battler.is_alive:
             return
 
-        self.process_statuses(battler)
+        self.process_turn_start_statuses(battler)
+
+        if not battler.is_alive:
+            return
+
+        if not self.can_act(battler):
+            print(
+                f"{battler.name} is unable to act!"
+            )
+
+            self.process_turn_end_statuses(battler)
+            return
 
         # -------------------------
         # PLAYER TURN
@@ -187,6 +197,7 @@ class Battle:
         elif target_type == "any":
             return allies + enemies + [battler]
 
+
         return []
 
     def choose_target(self, targets):
@@ -221,9 +232,17 @@ class Battle:
 
         elif choice == "2":
             spell = self.choose_spell(battler)
-            target = self.choose_target(
-                self.get_targets_for_type(battler, spell.target_type)
-            )
+
+            if spell.target_type == "self":
+                target = battler
+            else:
+                target = self.choose_target(
+                    self.get_targets_for_type(
+                        battler,
+                        spell.target_type
+                    )
+                )
+
             return SpellAction(spell, target)
 
         elif choice == "3":
@@ -231,9 +250,24 @@ class Battle:
 
         return AttackAction(self.choose_party_target())
 
-    def process_statuses(self, battler):
+    def process_turn_start_statuses(self, battler):
         for status in battler.statuses[:]:
             status.on_turn_start(battler)
 
             if status.expired:
+                status.on_expire(battler)
                 battler.statuses.remove(status)
+
+    def process_turn_end_statuses(self, battler):
+        for status in battler.statuses[:]:
+            status.on_turn_end(battler)
+
+            if status.expired:
+                status.on_expire(battler)
+                battler.statuses.remove(status)
+
+    def can_act(self, battler):
+        return all(
+            status.can_act(battler)
+            for status in battler.statuses
+        )

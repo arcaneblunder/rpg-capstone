@@ -70,6 +70,25 @@ class Battler:
         self.mp -= cost
         return True
 
+    def add_status(self, status):
+        existing = next(
+            (
+                s for s in self.statuses
+                if type(s) is type(status)
+            ),
+            None
+        )
+
+        if existing:
+            existing.duration = max(
+                existing.duration,
+                status.duration
+            )
+            return
+
+        self.statuses.append(status)
+        status.on_apply(self)
+
     def __repr__(self) -> str:
         return (
             f"Battler("

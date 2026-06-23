@@ -1,4 +1,4 @@
-from status import RegenStatus
+from status import RegenStatus, StunStatus
 
 class Effect:
     def apply(self, caster, target, spell, battle):
@@ -44,3 +44,14 @@ class RegenEffect:
         print(
             f"{target.name} gains regeneration!"
         )
+
+class StunEffect:
+    def __init__(self, duration: int = 1):
+        self.duration = duration
+
+    def apply(self, caster, target, spell, battle):
+        target.add_status(
+            StunStatus(duration=self.duration)
+        )
+
+        print(f"{target.name} is stunned!")
