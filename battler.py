@@ -10,7 +10,7 @@ class Battler:
         dexterity: int,
         constitution: int,
         intelligence: int,
-        is_defending: bool = False
+        is_defending: bool = False,
     ) -> None:
         self.name = name
         self.hp = hp
@@ -23,6 +23,7 @@ class Battler:
         self.intelligence = intelligence
         self.is_defending = is_defending
         self.spells = []
+        self.statuses = []
 
     def heal_damage(self, restore_amount: int, over_heal : bool = False) -> int:
         if restore_amount < 0:

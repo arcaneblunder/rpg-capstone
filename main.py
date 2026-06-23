@@ -14,21 +14,28 @@ def main():
         15, 10, 10, 8
     )
     fireball = Spell(
-        name="Damage",
-        mp_cost=5,
+        name="Fireball",
+        mp_cost=115,
         power=1.5,
         target_type="enemy",
         effect=DamageEffect()
     )
+    regen = Spell(
+        name="Regen",
+        mp_cost=8,
+        power=0.5,
+        target_type="ally",
+        effect=RegenEffect()
+    )
     heal = Spell(
         name="Heal",
-        mp_cost=10,
+        mp_cost=1110,
         power=1.5,
         target_type="ally",
         effect=HealEffect()
     )
     focus = Spell("Focus", 2, 1, "self", "restore_mp")
-    hero.spells = [heal]
+    hero.spells = [heal, regen]
 
     mage = Character(
         "Mage", 70, 70, 40, 40,

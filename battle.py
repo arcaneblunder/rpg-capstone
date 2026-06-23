@@ -105,6 +105,8 @@ class Battle:
         if not battler.is_alive:
             return
 
+        self.process_statuses(battler)
+
         # -------------------------
         # PLAYER TURN
         # -------------------------
@@ -205,7 +207,7 @@ class Battle:
             print("Invalid choice.")
 
     def get_player_action(self, battler):
-        print(f"\n{battler.name}'s turn")
+        print(f"\n{battler.name}'s turn : HP {battler.hp}/{battler.maxhp} | MP {battler.mp}/{battler.maxmp}")
 
         print("1. Attack")
         print("2. Use Spell")
@@ -228,3 +230,10 @@ class Battle:
             return DefendAction()
 
         return AttackAction(self.choose_party_target())
+
+    def process_statuses(self, battler):
+        for status in battler.statuses[:]:
+            status.on_turn_start(battler)
+
+            if status.expired:
+                battler.statuses.remove(status)

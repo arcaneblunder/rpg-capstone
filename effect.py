@@ -1,3 +1,5 @@
+from status import RegenStatus
+
 class Effect:
     def apply(self, caster, target, spell, battle):
         raise NotImplementedError
@@ -26,4 +28,19 @@ class DamageEffect:
         print(
             f"{caster.name} deals {actual_damage} damage to {target.name} "
             f"with {spell.name}!"
+        )
+
+class RegenEffect:
+    def apply(self, caster, target, spell, battle):
+        heal_amount = int(caster.intelligence * spell.power)
+
+        target.statuses.append(
+            RegenStatus(
+                heal_amount=heal_amount,
+                duration=3
+            )
+        )
+
+        print(
+            f"{target.name} gains regeneration!"
         )
