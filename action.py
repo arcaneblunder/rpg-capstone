@@ -25,9 +25,40 @@ class SpellAction(Action):
 
         caster.mp -= self.spell.mp_cost
 
-        self.spell.effect.apply(
-            caster=caster,
-            target=self.target,
-            spell=self.spell,
-            battle=battle
-        )
+        for effect in self.spell.effects:
+
+            targets = battle.resolve_targets(
+                caster,
+                self.target,
+                effect.target_type
+            )
+
+            for target in targets:
+                effect.apply(
+                    caster,
+                    target,
+                    self.spell,
+                    battle
+                )
+
+class ItemAction(Action):
+    def __init__(self, item, target):
+        self.item = item
+        self.target = target
+
+    def execute(self, battle, user):
+        for effect in self.item.effects:
+
+            targets = battle.resolve_targets(
+                user,
+                self.target,
+                effect.target_type
+            )
+
+            for target in targets:
+                effect.apply(
+                    caster=user,
+                    target=target,
+                    spell=None,
+                    battle=battle
+                )

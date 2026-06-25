@@ -1,10 +1,15 @@
-from status import RegenStatus, StunStatus
+from status import RegenStatus, StunStatus, WeakStatus
+
 
 class Effect:
+    def __init__(self, target_type="selected"):
+        self.target_type = target_type
     def apply(self, caster, target, spell, battle):
         raise NotImplementedError
 
 class HealEffect(Effect):
+    def __init__(self, target_type="selected"):
+        super().__init__(target_type)
     def apply(self, caster, target, spell, battle):
         heal_amount = caster.intelligence * spell.power
 
@@ -19,9 +24,15 @@ class HealEffect(Effect):
             f"for {heal_amount} HP!"
         )
 
-class DamageEffect:
+class DamageEffect(Effect):
+    def __init__(self, target_type="selected"):
+        super().__init__(target_type)
+
     def apply(self, caster, target, spell, battle):
         damage = caster.intelligence * spell.power
+
+        for status in caster.statuses:
+            damage = status.modify_damage_dealt(damage)
 
         actual_damage = target.take_damage(damage)
 
@@ -30,7 +41,10 @@ class DamageEffect:
             f"with {spell.name}!"
         )
 
-class RegenEffect:
+# coefficient addition for over time effects?
+class RegenEffect(Effect):
+    def __init__(self, target_type="selected"):
+        super().__init__(target_type)
     def apply(self, caster, target, spell, battle):
         heal_amount = int(caster.intelligence * spell.power)
 
@@ -45,8 +59,9 @@ class RegenEffect:
             f"{target.name} gains regeneration!"
         )
 
-class StunEffect:
-    def __init__(self, duration: int = 1):
+class StunEffect(Effect):
+    def __init__(self, duration: int = 1, target_type="selected"):
+        super().__init__(target_type)
         self.duration = duration
 
     def apply(self, caster, target, spell, battle):
@@ -55,3 +70,15 @@ class StunEffect:
         )
 
         print(f"{target.name} is stunned!")
+
+class WeakEffect(Effect):
+    def __init__(self, duration: int = 1, target_type="selected"):
+        super().__init__(target_type)
+        self.duration = duration
+
+    def apply(self, caster, target, spell, battle):
+        target.add_status(
+            WeakStatus(duration=self.duration)
+        )
+
+        print(f"{target.name} is weakened!")

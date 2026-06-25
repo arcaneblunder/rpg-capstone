@@ -1,6 +1,4 @@
-from character import Character
-from enemy import Enemy
-from battle import Battle
+
 from spell import Spell
 from effect import *
 
@@ -18,37 +16,47 @@ def main():
         mp_cost=115,
         power=1.5,
         target_type="enemy",
-        effect=DamageEffect()
+        effects=[DamageEffect(target_type="selected")]
     )
     regen = Spell(
         name="Regen",
         mp_cost=8,
         power=0.5,
         target_type="ally",
-        effect=RegenEffect()
+        effects=[RegenEffect(target_type="selected")]
     )
     heal = Spell(
         name="Heal",
         mp_cost=1110,
         power=1.5,
         target_type="ally",
-        effect=HealEffect()
+        effects=[HealEffect(target_type="selected")]
     )
     focus = Spell(
         name="Focus",
         mp_cost=1,
         power= 1,
         target_type="self",
-        effect=HealEffect()
+        effects=[HealEffect(target_type="selected")]
     )
     thunder_shock = Spell(
         name="Thunder Shock",
         mp_cost=8,
         power=0,
         target_type="enemy",
-        effect=StunEffect(duration=2)
+        effects=[        StunEffect(
+            duration=2,
+            target_type="selected"
+        )]
     )
-    hero.spells = [heal, regen]
+    big_heal = Spell(
+        name="Test",
+        mp_cost=1,
+        power=1,
+        target_type="ally",
+        effects=[HealEffect(target_type="selected"), RegenEffect(target_type="selected"), DamageEffect(target_type="all_enemies")]
+    )
+    hero.spells = [heal, regen, big_heal]
 
     mage = Character(
         "Mage", 70, 70, 40, 40,

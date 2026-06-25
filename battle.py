@@ -271,3 +271,21 @@ class Battle:
             status.can_act(battler)
             for status in battler.statuses
         )
+
+    def resolve_targets(
+            self,
+            caster,
+            selected_target,
+            target_type
+    ):
+        if target_type == "selected":
+            return [selected_target]
+
+        if target_type == "self":
+            return [caster]
+
+        if target_type == "all_allies":
+            return self.get_allies(caster)
+
+        if target_type == "all_enemies":
+            return self.get_enemies(caster)

@@ -28,6 +28,9 @@ class Status:
     def can_act(self, battler):
         return True
 
+    def modify_damage_dealt(self, value: int) -> int:
+        return value
+
 
 class RegenStatus(Status):
     def __init__(self, heal_amount: int, duration: int):
@@ -68,6 +71,16 @@ class StunStatus(Status):
 
     def can_act(self, battler):
         return False
+
+    def on_turn_end(self, battler):
+        self.tick()
+
+class WeakStatus(Status):
+    def __init__(self, duration: int = 1):
+        super().__init__(duration)
+
+    def modify_damage_dealt(self, value: int) -> int:
+        return int(value * self.multiplier)
 
     def on_turn_end(self, battler):
         self.tick()
