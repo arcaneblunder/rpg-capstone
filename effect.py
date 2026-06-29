@@ -80,6 +80,24 @@ class PoisonEffect(Effect):
             f"{target.name} has been poisoned!"
         )
 
+class BurnEffect(Effect):
+    def __init__(self, duration: int = 1, target_type="selected"):
+        super().__init__(target_type)
+        self.duration = duration
+
+    def apply(self, caster, target, spell, battle):
+        damage = int(caster.intelligence * spell.power)
+
+        target.statuses.append(
+            PoisonStatus(
+                damage=damage,
+                duration=self.duration
+            )
+        )
+        print(
+            f"{target.name} has been set on fire!"
+        )
+
 class StunEffect(Effect):
     def __init__(self, duration: int = 1, target_type="selected"):
         super().__init__(target_type)

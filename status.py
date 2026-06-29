@@ -65,6 +65,21 @@ class PoisonStatus(Status):
 
         self.tick()
 
+class BurnStatus(Status):
+    def __init__(self, damage: int, duration: int):
+        super().__init__(duration)
+        self.damage = damage
+
+    def on_turn_start(self, battler):
+        actual_damage = battler.take_damage(self.damage)
+
+        print(
+            f"{battler.name} suffers "
+            f"{actual_damage} burn damage."
+        )
+
+        self.tick()
+
 class StunStatus(Status):
     def __init__(self, duration: int = 1):
         super().__init__(duration)
