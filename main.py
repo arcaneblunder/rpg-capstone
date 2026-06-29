@@ -44,10 +44,19 @@ def main():
         mp_cost=8,
         power=0,
         target_type="enemy",
-        effects=[        StunEffect(
+        effects=[StunEffect(
             duration=2,
             target_type="selected"
         )]
+    )
+    poison = Spell(
+        name="Poison",
+        mp_cost=1,
+        power=1,
+        target_type="enemy",
+        effects=[PoisonEffect(
+            duration=2,
+            target_type="selected")]
     )
     big_heal = Spell(
         name="Test",
@@ -62,7 +71,7 @@ def main():
         "Mage", 70, 70, 40, 40,
         8, 10, 8, 15
     )
-    mage.spells = [fireball, focus, thunder_shock]
+    mage.spells = [fireball, focus, thunder_shock, poison]
 
     slime = Battler(
         "Slime", 30, 30, 0, 0,

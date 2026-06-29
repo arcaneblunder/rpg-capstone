@@ -1,4 +1,4 @@
-from status import RegenStatus, StunStatus, WeakStatus
+from status import RegenStatus, StunStatus, WeakStatus, PoisonStatus
 
 
 class Effect:
@@ -43,20 +43,41 @@ class DamageEffect(Effect):
 
 # coefficient addition for over time effects?
 class RegenEffect(Effect):
-    def __init__(self, target_type="selected"):
+    def __init__(self, duration: int = 1, target_type="selected"):
         super().__init__(target_type)
+        self.duration = duration
+
     def apply(self, caster, target, spell, battle):
         heal_amount = int(caster.intelligence * spell.power)
 
         target.statuses.append(
             RegenStatus(
                 heal_amount=heal_amount,
-                duration=3
+                duration=self.duration
             )
         )
 
         print(
-            f"{target.name} gains regeneration!"
+            f"{target.name} gains regeneration for {self.duration} seconds.!"
+        )
+
+
+class PoisonEffect(Effect):
+    def __init__(self, duration: int = 1, target_type="selected"):
+        super().__init__(target_type)
+        self.duration = duration
+
+    def apply(self, caster, target, spell, battle):
+        damage = int(caster.intelligence * spell.power)
+
+        target.statuses.append(
+            PoisonStatus(
+                damage=damage,
+                duration=self.duration
+            )
+        )
+        print(
+            f"{target.name} has been poisoned!"
         )
 
 class StunEffect(Effect):
