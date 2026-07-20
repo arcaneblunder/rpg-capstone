@@ -54,6 +54,9 @@ class Battle:
         for i, enemy in enumerate(alive_enemies, start=1):
             print(f"{i}. {enemy.name} (HP: {enemy.hp}/{enemy.maxhp})")
 
+        # get length of alive enemies to determine cancel
+        print(f"{len(alive_enemies) + 1}. Cancel")
+
         while True:
             choice = input("> ")
 
@@ -65,6 +68,9 @@ class Battle:
 
             if 0 <= index < len(alive_enemies):
                 return alive_enemies[index]
+
+            if index == len(alive_enemies):
+                raise CancelSelection()
 
     # -------------------------
     # Combat actions
@@ -218,6 +224,8 @@ class Battle:
         for i, target in enumerate(targets, start=1):
             print(f"{i}. {target.name} (HP: {target.hp}/{target.maxhp})")
 
+        print("Cancel")
+
         while True:
             choice = input("> ")
 
@@ -226,6 +234,9 @@ class Battle:
 
                 if 0 <= index < len(targets):
                     return targets[index]
+
+                if index == len(targets):
+                    raise CancelSelection()
 
             print("Invalid choice.")
 
