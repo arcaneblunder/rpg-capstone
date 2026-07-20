@@ -1,4 +1,5 @@
-
+import effect
+from item import Item, Consumable, Equipment
 from spell import Spell
 from effect import *
 
@@ -65,6 +66,30 @@ def main():
         target_type="ally",
         effects=[HealEffect(target_type="selected"), RegenEffect(target_type="selected"), DamageEffect(target_type="all_enemies")]
     )
+
+    healing_potion = Consumable(
+        name="Healing Potion",
+        description="Healing Potion",
+        effects=[HealEffect(target_type="selected")]
+    )
+
+    mana_potion = Consumable(
+        name="Mana Potion",
+        description="Mana Potion",
+        effects=[HealEffect(target_type="selected")]
+    )
+    big_sword = Equipment(
+        name="Big Sword",
+        description="Big Sword",
+        slot="left_hand",
+        bonuses={"strength": 4, "agility": 10}
+    )
+    #print(hero.total_strength)
+    hero.equip(big_sword)
+    print(hero.strength)
+    hero.unequip("left_hand")
+    hero.unequip("right_hand")
+    print(hero.strength)
     hero.spells = [heal, regen, big_heal]
 
     mage = Character(

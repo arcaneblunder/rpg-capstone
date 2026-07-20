@@ -1,19 +1,20 @@
 class Item:
-    def __init__(self, name, description, effects, item_type: str="consumable", strength_bonus = 0, intelligence_bonus: int = 0):
+    def __init__(self, name, description):
         self.name = name
         self.description = description
-        self.effects = effects or []
-        self.item_type = item_type
 
-        self.strength_bonus = strength_bonus
-        self.intelligence_bonus = intelligence_bonus
+class Consumable(Item):
+    def __init__(self, name, description, effects, is_consumable=True):
+        super().__init__(name, description)
+        self.effects = effects or []
+        self.is_consumable = is_consumable
 
     def execute(self, battle, user):
-        for effect in self.item.effects:
+        for effect in self.effects:
 
             targets = battle.resolve_targets(
                 user,
-                self.target,
+                effect.target,
                 effect.target_type
             )
 
@@ -24,3 +25,9 @@ class Item:
                     spell=None,
                     battle=battle
                 )
+
+class Equipment(Item):
+    def __init__(self, name, description, slot, bonuses=None):
+        super().__init__(name, description)
+        self.slot = slot
+        self.bonuses = bonuses or {}
