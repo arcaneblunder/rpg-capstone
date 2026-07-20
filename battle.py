@@ -60,17 +60,17 @@ class Battle:
         while True:
             choice = input("> ")
 
-            if not choice.isdigit():
-                print("Enter a number.")
-                continue
+            if choice.isdigit():
 
-            index = int(choice) - 1
+                index = int(choice) - 1
 
-            if 0 <= index < len(alive_enemies):
-                return alive_enemies[index]
+                if 0 <= index < len(alive_enemies):
+                    return alive_enemies[index]
 
-            if index == len(alive_enemies):
-                raise CancelSelection()
+                if index == len(alive_enemies):
+                    raise CancelSelection()
+            else:
+                print("Invalid choice.")
 
     # -------------------------
     # Combat actions
