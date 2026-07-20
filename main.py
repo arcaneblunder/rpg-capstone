@@ -82,14 +82,14 @@ def main():
         name="Big Sword",
         description="Big Sword",
         slot="left_hand",
-        bonuses={"strength": 4, "agility": 10}
+        bonuses={"strength": 4, "dexterity": 10}
     )
     #print(hero.total_strength)
+    print(hero.dexterity)
     hero.equip(big_sword)
     print(hero.strength)
-    hero.unequip("left_hand")
-    hero.unequip("right_hand")
-    print(hero.strength)
+
+    print(hero.dexterity)
     hero.spells = [heal, regen, big_heal]
 
     mage = Character(

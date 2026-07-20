@@ -81,36 +81,8 @@ class Character(Battler):
         self.mp -= amount
         return True
 
-    @property
-    def strength(self) -> int:
-        """Overrides the raw strength attribute to dynamically include equipment bonuses."""
-        bonus_strength = 0
 
-        # Safely pull values whether equipment is a dict or an array
-        items_to_check = (
-            self.equipment.values()
-            if isinstance(self.equipment, dict)
-            else self.equipment
-        )
 
-        for item in items_to_check:
-            if item and hasattr(item, 'bonuses') and isinstance(item.bonuses, dict):
-                bonus_strength += item.bonuses.get("strength", 0)
-
-        # Look up the original base value assigned during __init__
-        base_strength = self.__dict__.get('_base_strength', None)
-        if base_strength is None:
-            # Fallback to store it the first time this property runs
-            base_strength = self.__dict__.get('strength', 0)
-            self.__dict__['_base_strength'] = base_strength
-
-        return base_strength + bonus_strength
-
-    @strength.setter
-    def strength(self, value: int) -> None:
-        """Allows direct modification of base strength (like during level ups)."""
-        self.__dict__['_base_strength'] = value
-        self.__dict__['strength'] = value
     def equip(self, equipment: Equipment) -> Optional[Equipment]:
         """Equips an item and returns the previously equipped item if one existed."""
         if equipment.slot not in self.equipment:
@@ -142,3 +114,29 @@ class Character(Battler):
 
         print(f"Nothing was equipped in {slot}")
         return None
+
+    def _equipment_bonus(self, stat: str) -> int:
+        return sum(
+            item.bonuses.get(stat, 0)
+            for item in self.equipment.values()
+            if item is not None
+        )
+
+    def _stat(self, name: str) -> int:
+        return getattr(self, f"_{name}") + self._equipment_bonus(name)
+
+    @property
+    def strength(self):
+        return self._stat("strength")
+
+    @property
+    def dexterity(self):
+        return self._stat("dexterity")
+
+    @property
+    def constitution(self):
+        return self._stat("constitution")
+
+    @property
+    def intelligence(self):
+        return self._stat("intelligence")
