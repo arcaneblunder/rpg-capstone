@@ -60,9 +60,6 @@ class Battler:
     def die(self) -> None:
         print(f"{self.name} has been slain.")
 
-    def spend_endurance(self) -> None:
-        print(f"{self.name} uses skill.")
-
     def spend_mp(self, cost: int) -> bool:
         if self.mp < cost:
             return False

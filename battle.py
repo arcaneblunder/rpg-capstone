@@ -1,6 +1,10 @@
 import random
 from action import *
 
+# used to cancel an action
+class CancelSelection(Exception):
+    pass
+
 class Battle:
     def __init__(self, party, enemies):
         self.party = party
@@ -79,6 +83,10 @@ class Battle:
         for i, spell in enumerate(battler.spells, start=1):
             print(f"{i}. {spell.name} (MP: {spell.mp_cost})")
 
+        # implement cancel options
+        cancel_choice = len(battler.spells) + 1
+        print(f"{cancel_choice}. Cancel")
+
         while True:
             choice = input("> ")
 
@@ -87,6 +95,9 @@ class Battle:
 
                 if 0 <= index < len(battler.spells):
                     return battler.spells[index]
+
+                if index == len(battler.spells):
+                    raise CancelSelection()
 
             print("Invalid choice.")
 
@@ -132,7 +143,7 @@ class Battle:
             action = AttackAction(self.choose_enemy_target())
             action.execute(self, battler)
 
-            # for ai stuff action = battler.ai_choose_action(self)
+            # for AI stuff action = battler.ai_choose_action(self)
 
     # -------------------------
     # Main loop
@@ -159,6 +170,7 @@ class Battle:
             print("Defeat!")
 
 
+    """
     def player_choose_action(self, battler) -> str:
         print(f"\n{battler.name}'s turn: HP: {battler.hp}/{battler.maxhp} MP {battler.mp}/{battler.maxmp}")
         print("1. Attack")
@@ -168,7 +180,7 @@ class Battle:
         choice = input("> ")
 
         return choice
-
+    """
     def get_allies(self, battler):
         if battler in self.party:
             return self.get_alive_party()
@@ -218,37 +230,46 @@ class Battle:
             print("Invalid choice.")
 
     def get_player_action(self, battler):
-        print(f"\n{battler.name}'s turn : HP {battler.hp}/{battler.maxhp} | MP {battler.mp}/{battler.maxmp}")
 
-        print("1. Attack")
-        print("2. Use Spell")
-        print("3. Defend")
+        while True:
 
-        choice = input("> ")
+            print(f"\n{battler.name}'s turn : HP {battler.hp}/{battler.maxhp} | MP {battler.mp}/{battler.maxmp}")
 
-        if choice == "1":
-            target = self.choose_party_target()
-            return AttackAction(target)
+            print("1. Attack")
+            print("2. Use Spell")
+            print("3. Defend")
 
-        elif choice == "2":
-            spell = self.choose_spell(battler)
+            try:
+                choice = input("> ")
 
-            if spell.target_type == "self":
-                target = battler
-            else:
-                target = self.choose_target(
-                    self.get_targets_for_type(
-                        battler,
-                        spell.target_type
-                    )
-                )
+                if choice == "1":
+                    target = self.choose_party_target()
+                    return AttackAction(target)
 
-            return SpellAction(spell, target)
+                elif choice == "2":
+                    spell = self.choose_spell(battler)
 
-        elif choice == "3":
-            return DefendAction()
+                    if spell.target_type == "self":
+                        target = battler
+                    else:
+                        target = self.choose_target(
+                            self.get_targets_for_type(
+                                battler,
+                                spell.target_type
+                            )
+                        )
 
-        return AttackAction(self.choose_party_target())
+                    return SpellAction(spell, target)
+
+                elif choice == "3":
+                    return DefendAction()
+
+                else:
+                    print("Invalid choice.")
+
+
+            except CancelSelection:
+                print("Cancelled.")
 
     def process_turn_start_statuses(self, battler):
         for status in battler.statuses[:]:
