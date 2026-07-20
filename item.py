@@ -27,7 +27,7 @@ class Consumable(Item):
                 )
 
 class Equipment(Item):
-    def __init__(self, name, description, slot, bonuses=None):
+    def __init__(self, name, description, slots, bonuses=None):
         super().__init__(name, description)
-        self.slot = slot
+        self.slots = slots
         self.bonuses = bonuses or {}

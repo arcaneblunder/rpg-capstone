@@ -81,24 +81,34 @@ class Character(Battler):
         self.mp -= amount
         return True
 
+    def equip(self, equipment: Equipment) -> list[Equipment]:
+        """Equip an item and return replaced equipment."""
 
+        # Check slots exist
+        for slot in equipment.slots:
+            if slot not in self.equipment:
+                print(f"Invalid slot: {slot}")
+                return []
 
-    def equip(self, equipment: Equipment) -> Optional[Equipment]:
-        """Equips an item and returns the previously equipped item if one existed."""
-        if equipment.slot not in self.equipment:
-            print(f"Invalid equipment slot: {equipment.slot}!")
-            return None
+        # Check what is being replaced
+        removed = []
 
-        # Store the old item to return it to inventory
-        old_item = self.equipment[equipment.slot]
-        if old_item:
-            print(f"Unequipped {old_item.name} from {equipment.slot}")
+        for slot in equipment.slots:
+            old_item = self.equipment[slot]
 
-        # Equip the new item
-        self.equipment[equipment.slot] = equipment
-        print(f"Equipped {equipment.name} to {equipment.slot}")
+            if old_item and old_item not in removed:
+                removed.append(old_item)
 
-        return old_item
+        # Clear old items
+        for item in removed:
+            for slot in item.slots:
+                self.equipment[slot] = None
+
+        # Equip new item in all slots
+        for slot in equipment.slots:
+            self.equipment[slot] = equipment
+
+        return removed
 
     def unequip(self, slot: str) -> Optional[Equipment]:
         """Removes an item from a specific slot and returns it."""
@@ -116,9 +126,11 @@ class Character(Battler):
         return None
 
     def _equipment_bonus(self, stat: str) -> int:
+        equipped_items = set(self.equipment.values())
+
         return sum(
             item.bonuses.get(stat, 0)
-            for item in self.equipment.values()
+            for item in equipped_items
             if item is not None
         )
 

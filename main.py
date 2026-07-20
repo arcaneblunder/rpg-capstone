@@ -81,7 +81,7 @@ def main():
     big_sword = Equipment(
         name="Big Sword",
         description="Big Sword",
-        slot="left_hand",
+        slots=["right_hand", "left_hand"],
         bonuses={"strength": 4, "dexterity": 10}
     )
     #print(hero.total_strength)
